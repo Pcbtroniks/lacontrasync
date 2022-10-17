@@ -30,8 +30,9 @@ class Inventario {
 		$this->productos = $this->cargar_productos();
 		$this->precios = $this->cargar_precios();
 		
+		$this->dump();
 		//$this->renderizar_json();
-		$this->obtener_configuracion();
+		//$this->obtener_configuracion();
 	}
 	
 	protected function obtener_configuracion()
@@ -250,6 +251,17 @@ class Inventario {
 		header('Content-type: application/json; charset=utf-8');
 		echo json_encode($lista_productos);
 	
+	}
+
+	public function dump(){
+		$configs = [
+			"Directorio de Mr. Tienda" => $this->mrtienda_path,
+			"Código de Almacen" => $this->cod_almacen,
+			"Código de Tienda" => $this->cod_tienda,
+			"Codigo de Escala" => $this->cod_escala,
+		];
+
+		echo json_encode($configs);
 	}
 }
 
