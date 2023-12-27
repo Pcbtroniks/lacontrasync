@@ -215,13 +215,14 @@ class Sincronizacion
 }
 
 $sincronizacion = new Sincronizacion(
-    'http://localhost:8000/index.php',
-    'https://www.lacontravinos.com/ensenada/'
+    // 'http://localhost:8000/index.php',
+    'http://localhost:8000/syncapi/index.php',
+    'https://www.lacontravinos.com/oaxaca/'
 );
 
 $sincronizacion->establecerLlavesWoocommerce(
-    'ck_18206408153ba6c67884213e49218697b8d6eb8c',
-    'cs_bb8ec6757c8e72b111943768676849123cfd60c2'
+    'ck_7436cce9ae4bc279a0cc2e37ded4517a4c63f9ac',
+    'cs_357cd12ca00866da1cb367e6a9d4767b3ccde05e'
 );
 
 $sincronizacion->comenzarSincronizacion();

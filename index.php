@@ -30,8 +30,8 @@ class Inventario {
 		$this->productos = $this->cargar_productos();
 		$this->precios = $this->cargar_precios();
 		
-		//$this->renderizar_json();
-		$this->obtener_configuracion();
+		$this->renderizar_json();
+		// $this->obtener_configuracion();
 	}
 	
 	protected function obtener_configuracion()

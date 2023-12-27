@@ -14,15 +14,15 @@ class Inventario {
 	private $precios; // Precios de los productos
 	
 	// Configuración inicial
-	public function __construct($cod_tienda, $mrtienda_path) {
+	public function __construct($mrtienda_path) {
 		# Conexión con a la base de datos
 		$this->odbc = odbc_connect ('dd', '', '') or die('¡No se pudo conectar a la base de datos ODBC!');
 		
 		# Valores de Configuración
-		$this->cod_tienda = $cod_tienda;
+		$this->cod_tienda = $this->establecer_tienda();
 		$this->mrtienda_path = $mrtienda_path;
 		$this->cod_escala = $this->establecer_escala();
-		$this->cod_almacen = $this->establecer_almacen($cod_tienda);
+		$this->cod_almacen = $this->establecer_almacen($this->cod_tienda);
 		
 		# Tablas
 		$this->stock = $this->cargar_existencias();
@@ -30,7 +30,9 @@ class Inventario {
 		$this->productos = $this->cargar_productos();
 		$this->precios = $this->cargar_precios();
 		
-		$this->renderizar_json();
+        $this->ReadFile($this->mrtienda_path . '\\REGISTRO\\VALORES.DBF');
+		// $this->renderizar_json();
+		//$this->obtener_configuracion();
 	}
 	
 	protected function obtener_configuracion()
@@ -40,22 +42,34 @@ class Inventario {
 		echo PHP_EOL . "Código de Almacen: {$this->cod_almacen}" . PHP_EOL;
 		echo PHP_EOL . "Directorio de Mr. Tienda: \"{$this->mrtienda_path}\"" . PHP_EOL;
 	}
+	
+	// Establecer el codigo de la tienda que corresponde
+	private function establecer_tienda()
+	{
+		$strsql= 'SELECT TDA_MAIN FROM config.dbf';
+		$query = odbc_exec($this->odbc, $strsql) or die (odbc_errormsg());
+		
+		$cod_tienda = null;
+		
+		while($row = odbc_fetch_array($query))
+		{
+			$cod_tienda = $row['TDA_MAIN'];
+		}
+		
+		return $cod_tienda;
+	}
 
 	// Establecer el almacen que corresponde
-	private function establecer_almacen($cod_tienda)
+	private function establecer_almacen()
 	{
-		$strsql= 'SELECT * FROM almacen.dbf';
+		$strsql= 'SELECT COD_MAIN FROM config.dbf';
 		$query = odbc_exec($this->odbc, $strsql) or die (odbc_errormsg());
 		
 		$cod_alma = null;
 		
 		while($row = odbc_fetch_array($query))
 		{
-			if($row["COD_TIENDA"] == $cod_tienda)
-			{
-				$cod_alma = $row["COD_ALMA"];
-				break;
-			}
+			$cod_alma = $row['COD_MAIN'];
 		}
 		
 		return $cod_alma;
@@ -145,7 +159,10 @@ class Inventario {
 		
 		while($row = odbc_fetch_array($query))
 		{
-			$precios[] = $row;
+			if($row['COD_ESCALA'] == $this->cod_escala)
+			{
+				$precios[] = $row;
+			}
 		}
 		
 		return $precios;
@@ -235,6 +252,19 @@ class Inventario {
 		echo json_encode($lista_productos);
 	
 	}
+
+    public function ReadFile($file_path)
+    {
+        $db = dbase_open($file_path, 0);
+        
+        $record_numbers = dbase_numrecords($db);
+        
+        for ($i = 1; $i <= $record_numbers; $i++)
+        {
+            $row = dbase_get_record_with_names($db, $i);
+            print_r($row);
+        }
+    }
 }
 
-$inventario = new Inventario('001', 'C:\\MRTIENDA');
+$inventario = new Inventario('C:\\MRTIENDA');
