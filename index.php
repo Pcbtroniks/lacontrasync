@@ -251,6 +251,17 @@ class Inventario {
 		echo json_encode($lista_productos);
 	
 	}
+
+	public function dump(){
+		$configs = [
+			"Directorio de Mr. Tienda" => $this->mrtienda_path,
+			"Código de Almacen" => $this->cod_almacen,
+			"Código de Tienda" => $this->cod_tienda,
+			"Codigo de Escala" => $this->cod_escala,
+		];
+
+		echo json_encode($configs);
+	}
 }
 
 $inventario = new Inventario('C:\\MRTIENDA');
